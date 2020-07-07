@@ -13,7 +13,7 @@ import numpy as np
 import os
 import json
 from concurrent import futures
-import copy_reg
+import copyreg
 import types
 
 
@@ -264,7 +264,7 @@ class LldaModel:
                 """
                 for some special document m (only have one word) p_vector may be zero here, sum(p_vector) will be zero too
                 1.0 * p_vector / sum(p_vector) will be [...nan...]
-                so we should avoid inputting the special document 
+                so we should avoid inputting the special document
                 """
                 p_vector = 1.0 * p_vector / sum(p_vector)
                 # print p_vector
@@ -277,7 +277,7 @@ class LldaModel:
                 self.Topic2TermCountSum[k] += 1
                 count += 1
         assert count == self.WN
-        print "gibbs sample count: ", self.WN
+        print("gibbs sample count: ", self.WN)
         self.iteration += 1
         self.all_perplexities.append(self.perplexity())
         pass
@@ -435,7 +435,7 @@ class LldaModel:
         """
         for i in range(iteration):
             if log:
-                print "after iteration: %s, perplexity: %s" % (self.iteration, self.perplexity())
+                print("after iteration: %s, perplexity: %s" % (self.iteration, self.perplexity()) )
             self._gibbs_sample_training()
         pass
 
@@ -660,13 +660,13 @@ class LldaModel:
         :return: None if file doesn't exist or can not convert to an object by json, else return the object
         """
         if os.path.exists(file_name) is False:
-            print ("Error read path: [%s]" % file_name)
+            print("Error read path: [%s]" % file_name)
             return None
         with open(file_name, 'r') as f:
             try:
                 obj = json.load(f)
             except Exception:
-                print ("Error json: [%s]" % f.read()[0:10])
+                print("Error json: [%s]" % f.read()[0:10])
                 return None
         return obj
 
@@ -680,13 +680,17 @@ class LldaModel:
         """
         dirname = os.path.dirname(file_name)
         LldaModel._find_and_create_dirs(dirname)
+        print('target_objet:: ')
+        for item in target_object:
+            print(item, target_object[item])
+        return False
         try:
-            with open(file_name, "w") as f:
-                json.dump(target_object, f, skipkeys=False, ensure_ascii=False, check_circular=True, allow_nan=True, cls=None, indent=True, separators=None, encoding="utf-8", default=None, sort_keys=False)
-        except Exception, e:
+            with open(file_name, 'w',  encoding='utf8') as f:
+                json.dump(target_object, f, skipkeys=False, ensure_ascii=False, check_circular=True, allow_nan=True, cls=None, indent=True, separators=None, default=None, sort_keys=False)
+        except Exception as e:
             message = "Write [%s...] to file [%s] error: json.dump error" % (str(target_object)[0:10], file_name)
-            print ("%s\n\t%s" % (message, e.message))
-            print "e.message: ", e.message
+            print("%s\n\t%s" % (message, e.message))
+            print("e.message: ", e.message)
             return False
         else:
             # print ("Write %s" % file_name)
@@ -779,7 +783,7 @@ class LldaModel:
                 self.alpha_vector_Lambda = np.load(os.path.join(dir_name, "alpha_vector_Lambda.npy"))
                 self.eta_vector_sum = np.load(os.path.join(dir_name, "eta_vector_sum.npy"))
                 self.Topic2TermCountSum = np.load(os.path.join(dir_name, "Topic2TermCountSum.npy"))
-            except IOError or ValueError, e:
+            except IOError or ValueError as e:
                 print("%s: load derivative properties fail, initialize them with basic properties" % e)
                 self._initialize_derivative_fields()
         else:
@@ -948,4 +952,3 @@ class LldaModel:
 
 if __name__ == "__main__":
     pass
-
